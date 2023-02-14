@@ -20,3 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/hotels', [\App\Http\Controllers\HotelController::class, 'hotels']);
 Route::post('/hotels/register', [\App\Http\Controllers\HotelController::class, 'hotelRegister']);
+Route::post('/hotels/reservation', [\App\Http\Controllers\HotelController::class, 'reservation']);
