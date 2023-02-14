@@ -50,12 +50,12 @@ class HotelController extends Controller
         ];
     }
 
-    public function reservation(Request $request, ReservationService $reservationService)
+    public function reservation($hotelId, Request $request, ReservationService $reservationService)
     {
         try {
             $count = $request->input('count');
             /** @var Hotel $hotel */
-            $hotel = Hotel::find($request->input('hotel_id'));
+            $hotel = Hotel::find($hotelId);
             $remainRoomCount = 0;
 
             if (!$hotel) throw new \Exception('해당 호텔이 존재하지 않습니다');
@@ -66,7 +66,7 @@ class HotelController extends Controller
 
             if ($remainRoomCount - $count < 0) throw new \Exception('공실이 부족합니다');
 
-            $reservation = Reservation::create($request->all());
+            $reservation = Reservation::create(array_merge(['hotel_id' => $hotel->id], $request->all()));
 
         } catch (\Exception $exception) {
 
@@ -79,6 +79,25 @@ class HotelController extends Controller
             'msg' => $msg ?? null,
             'data' => $reservation ?? ['hotel_id' => $hotel->id],
             'remainRoom' => $remainRoomCount
+        ];
+    }
+
+    public function reservationStatus($reservationId, Request $request)
+    {
+        try {
+            $status = $request->status;
+            $reservation = Reservation::whereId($reservationId)->first();
+
+            $reservation->update([
+                'status' => $status
+            ]);
+        } catch (\Exception $exception) {
+            $status = false;
+        }
+
+        return [
+            'status' => $status ?? true,
+            'data' => $reservation ?? []
         ];
     }
 }

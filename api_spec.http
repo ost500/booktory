@@ -1,9 +1,10 @@
 # 1. 호텔 등록
+# 5. 솔드아웃 관련
 POST http://localhost:8522/api/hotels/register
 Content-Type: application/json
 
 {
-    "name": "씨마크 호텔",
+    "name": "씨마크 호텔2",
     "address": "대한민국 강원도 강릉시 23번지",
     "room_count": 40
 }
@@ -17,13 +18,26 @@ Accept: application/json
 ###
 
 # 3. 호텔 예약 신청
-POST http://localhost:8522/api/hotels/reservation
+# 4. 예약 신청 하나 재고
+# 6. 솔드아웃 예약 불가능
+POST http://localhost:8522/api/hotels/3/reservation
 Content-Type: application/json
 
 {
-    "hotel_id": 1,
     "user_name": "OST",
     "count": 1
+}
+
+###
+
+# 7. 확정 또는 거절 처리
+# 8. 재고 줄음
+# 9. 거절 처리 예약 취소
+PUT http://localhost:8522/api/hotels/reservations/21/status
+Content-Type: application/json
+
+{
+    "status": "active"
 }
 
 ###

@@ -15,7 +15,7 @@ class ReservationService
             ->select('hotels.*', 'reservations.*', DB::raw('SUM(reservations.count) as remain_count'))
             ->leftJoin('reservations', function ($q) {
                 $q->on('reservations.hotel_id', '=', 'hotels.id')
-                    ->where('status', '=', 'active');
+                    ->where('status', '!=', 'rejected');
             })
             ->groupBy('reservations.hotel_id')
             ->first();

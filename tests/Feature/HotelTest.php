@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Booktory\Rservation\ReservationService;
 use App\Models\Hotel;
+use App\Models\Reservation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -53,8 +54,7 @@ class HotelTest extends TestCase
     {
         $hotel = Hotel::all()->random(1)->first();
 
-        $response = $this->post('/api/hotels/reservation', [
-            'hotel_id' => $hotel->id,
+        $response = $this->post(route('reservation', ['hotelId' => $hotel->id]), [
             'user_name' => $this->faker->userName,
             'count' => $this->faker->numberBetween(5, 10)
         ]);
@@ -74,5 +74,21 @@ class HotelTest extends TestCase
         $useRoomCount = app(ReservationService::class)->remainRoomCount($hotel->id);
 
         $this->assertIsNumeric($useRoomCount);
+    }
+
+
+    /**
+     * HotelTest::예약_확정_시키기
+     * @test
+     */
+    public function 예약_확정_시키기()
+    {
+        $reservation = Reservation::all()->random(1)->first();
+
+        $response = $this->put(route('reservation.status', ['reservationId' => $reservation->id]), [
+            'status' => $this->faker->randomElement(['active', 'pending', 'rejected'])
+        ]);
+
+        $response->assertStatus(200);
     }
 }
