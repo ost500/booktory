@@ -1,3 +1,16 @@
+# 1. 호텔 등록
+POST http://localhost:8522/api/hotels/register
+Content-Type: application/json
+
+{
+    "name": "씨마크 호텔",
+    "address": "대한민국 강원도 강릉시 23번지",
+    "room_count": 40
+}
+
+###
+
+# 2. 호텔 리스트
 GET http://localhost:8522/api/hotels
 Accept: application/json
 
