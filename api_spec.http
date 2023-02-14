@@ -1,0 +1,4 @@
+GET http://localhost:8522/api/hotels
+Accept: application/json
+
+###
