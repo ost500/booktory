@@ -8,22 +8,25 @@ use Illuminate\Support\Facades\DB;
 
 class ReservationService
 {
-    public function remainRoomCount($hotelId)
+    public function remainRoomCount($hotelId): int
     {
-        $hotels = Hotel::where('hotels.id', $hotelId)
-            ->join('reservations', function ($q) {
+
+        $hotel = Hotel::where('hotels.id', $hotelId)
+            ->select('hotels.*', 'reservations.*', DB::raw('SUM(reservations.count) as remain_count'))
+            ->leftJoin('reservations', function ($q) {
                 $q->on('reservations.hotel_id', '=', 'hotels.id')
-                    ->where('status', '!=', 'rejected');
+                    ->where('status', '=', 'active');
             })
-            ->get();
+            ->groupBy('reservations.hotel_id')
+            ->first();
 
-        $useCount = $hotels->sum('count');
+        $useCount = $hotel->remain_count;
 
-        if ($hotels->isEmpty()) {
-            return 0;
+        if (!$useCount) {
+            return $hotel->room_count;
         }
 
-        return $hotels->first()->room_count - $useCount;
+        return $hotel->room_count - $useCount;
     }
 
 }

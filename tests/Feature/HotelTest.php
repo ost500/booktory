@@ -14,8 +14,8 @@ class HotelTest extends TestCase
     use WithFaker;
 
     /**
+     * HotelTest::호텔리스트
      * @test
-     * @return void
      */
     public function 호텔리스트()
     {

@@ -5,21 +5,34 @@ namespace App\Http\Controllers;
 use App\Booktory\Rservation\ReservationService;
 use App\Models\Hotel;
 use App\Models\Reservation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
-    public function hotels()
+    public function hotels(ReservationService $reservationService)
     {
         try {
-            $hotels = Hotel::get()->toArray();
+            /** @var Collection $hotels */
+            $hotels = Hotel::get();
+
+            $hotels->map(function (Hotel $hotel) use ($reservationService) {
+                $remainRoomCount = $reservationService->remainRoomCount($hotel->id);
+                $hotel->remain_room = $remainRoomCount;
+
+                $hotel->soldout = false;
+                if ($remainRoomCount < 1) {
+                    $hotel->soldout = true;
+                }
+            });
+
         } catch (\Exception $exception) {
             $status = false;
         }
 
         return [
             'status' => $status ?? true,
-            'data' => $hotels ?? []
+            'data' => $hotels->toArray() ?? []
         ];
     }
 
